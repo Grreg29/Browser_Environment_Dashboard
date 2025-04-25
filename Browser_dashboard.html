@@ -1,0 +1,122 @@
+<!--
+README:
+Browser Environment Dashboard
+This dashboard uses JavaScript's browser objects (navigator, screen, location, window, history)
+to interactively display browser and screen information, allow page control, and dynamically
+change styling based on screen size.
+
+Developed by: Juan Dela Cruz
+Course: BSIT 3A
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Browser Environment Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      transition: background-color 0.5s ease;
+    }
+    .header {
+      background: #f7f7f7;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-left: 5px solid #28a745;
+    }
+    section {
+      margin-bottom: 30px;
+    }
+    button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 1em;
+    }
+    .info {
+      background: #eef;
+      padding: 15px;
+      border-left: 3px solid #007bff;
+    }
+  </style>
+</head>
+<body onload="updateBackground()" onresize="updateBackground()">
+
+  <div class="header">
+    <h2>Student Profile</h2>
+    <ul>
+      <li><strong>Complete Name:</strong> Jose Greg Picaso</li>
+      <li><strong>Sex:</strong> Male</li>
+      <li><strong>Address:</strong> San Juan Evangelista St. Goa, Goa, Camarines Sur</li>
+      <li><strong>Course, Year, Section:</strong> BSIT 2B</li>
+      <li><strong>School:</strong> Partido State University</li>
+      <li><strong>Semester and Academic Year:</strong> 2nd Sem, AY 2024-2025</li>
+      <li><strong>Subject Code and Title:</strong> PF2- Event Driven Programming </li>
+      <li><strong>Instructor:</strong> Prof. Arjay Abio</li>
+      <li><strong>Link to Guess the Word Game: </strong><a href=" index.html" target="_blank "> Guess the Secret Word Game</a></li>
+      <li><strong>Link to Browser Dashboard: </strong><a href=" Browser_dashboard.html " target="_blank"> Browser_dashboard</a></li>
+    </ul>
+  </div>
+
+  <section>
+    <h3>A. Browser Information</h3>
+    <div class="info" id="browserInfo"></div>
+  </section>
+
+  <section>
+    <h3>B. Page Info & Controls</h3>
+    <div class="info" id="pageInfo"></div>
+    <button onclick="changeTitle()">Change Page Title</button>
+  </section>
+
+  <section>
+    <h3>C. Navigation Controls</h3>
+    <button onclick="location.reload()">Reload Page</button>
+    <button onclick="window.location.href='https://www.example.com'">Go to example.com</button>
+    <button onclick="history.forward()">Go Back</button>
+    <button onclick="history.forward()">Go Forward</button>
+  </section>
+
+  <script>
+    // A. Browser Info
+    const browserInfo = document.getElementById('browserInfo');
+    browserInfo.innerHTML = `
+      <p><strong>Browser:</strong> ${navigator.appName} (${navigator.appVersion})</p>
+      <p><strong>Platform:</strong> ${navigator.platform}</p>
+      <p><strong>Java Enabled:</strong> ${navigator.javaEnabled() ? 'Yes' : 'No'}</p>
+      <p><strong>Screen Resolution:</strong> ${screen.width} x ${screen.height}</p>
+      <p><strong>Available Screen Size:</strong> ${screen.availWidth} x ${screen.availHeight}</p>
+      <p><strong>Color Depth:</strong> ${screen.colorDepth} bits</p>
+    `;
+
+    // B. Page Info
+    const pageInfo = document.getElementById('pageInfo');
+    pageInfo.innerHTML = `
+      <p><strong>Current URL:</strong> ${location.href}</p>
+      <p><strong>Hostname:</strong> ${location.hostname}</p>
+      <p><strong>Page Title:</strong> <span id="titleDisplay">${document.title}</span></p>
+    `;
+
+    function changeTitle() {
+      const newTitle = prompt("Enter a new title:");
+      if (newTitle) {
+        document.title = newTitle;
+        document.getElementById('titleDisplay').textContent = newTitle;
+      }
+    }
+
+    // D. Dynamic Styling
+    function updateBackground() {
+      const width = window.innerWidth;
+      if (width < 600) {
+        document.body.style.backgroundColor = "lightblue"; // Mobile
+      } else if (width < 992) {
+        document.body.style.backgroundColor = "lightgreen"; // Tablet
+      } else {
+        document.body.style.backgroundColor = "orange"; // Desktop
+      }
+    }
+  </script>
+</body>
+</html>
