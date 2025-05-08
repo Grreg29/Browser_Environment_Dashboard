@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive DOM Traversal</title>
+  <style>
+    body {
+      color:#000000
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    header {
+      border-bottom: 2px solid #000000;
+      margin-bottom: 20px;
+    }
+
+    header h2 {
+      margin: 20px 0;
+    }
+
+    .node {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .grandparent {
+      background-color: #fad568;
+    }
+
+    .parent {
+      background-color: #aad6eb;
+      margin-left: 20px;
+    }
+
+    .child {
+      background-color: #b4ff5f;
+      margin-left: 40px;
+    }
+
+    .highlight {
+      outline: 3px solid red;
+    }
+
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <h2>Profile Information</h2>
+    <p><strong>Complete Name:</strong> Jose Greg D. Picaso</p>
+    <p><strong>Sex:</strong> Male</p>
+    <p><strong>Address:</strong> San Juan Evangelista St., Goa, Camarines Sur</p>
+    <p><strong>Course, Year, Section:</strong> BSIT 2B</p>
+    <p><strong>Name of School:</strong> Partido State University</p>
+    <p><strong>Semester and Academic Year:</strong> 2nd Semester, AY 2024-2025</p>
+    <p><strong>Subject Code and Title:</strong> PF2 - Event Driven Programming</p>
+    <p><strong>Name of Subject Instructor:</strong> Arjay Abio</p>
+  </header>
+
+  <!-- DOM Tree Section -->
+  <div id="dom-tree">
+    <div class="node grandparent" id="grandparent">Grandparent
+      <div class="node parent">Parent 1
+        <div class="node child">Child 1.1</div>
+        <div class="node child">Child 1.2</div>
+      </div>
+      <div class="node parent">Parent 2
+        <div class="node child">Child 2.1</div>
+        <div class="node child">Child 2.2</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Control Buttons -->
+  <div>
+    <button onclick="traverseDown()">Traverse Down</button>
+    <button onclick="traverseUp()">Traverse Up</button>
+    <button onclick="traverseNext()">Next Sibling</button>
+    <button onclick="traversePrev()">Previous Sibling</button>
+    <button onclick="addChild()">Add Child</button>
+    <button onclick="deleteNode()">Delete Node</button>
+  </div>
+
+  <script>
+    let selectedNode = null;
+
+    // Event listener for selecting nodes
+    document.getElementById('dom-tree').addEventListener('click', function(e) {
+      if (e.target.classList.contains('node')) {
+        if (selectedNode) {
+          selectedNode.classList.remove('highlight');
+        }
+        selectedNode = e.target;
+        selectedNode.classList.add('highlight');
+      }
+    });
+
+    // Traverse Down
+    function traverseDown() {
+      if (!selectedNode) return alert("No node selected.");
+      const child = selectedNode.querySelector(':scope > .node');
+      if (child) {
+        selectedNode.classList.remove('highlight');
+        selectedNode = child;
+        selectedNode.classList.add('highlight');
+      } else {
+        alert("No child node found.");
+      }
+    }
+
+    // Traverse Up
+    function traverseUp() {
+      if (!selectedNode) return alert("No node selected.");
+      const parent = selectedNode.parentElement.closest('.node');
+      if (parent) {
+        selectedNode.classList.remove('highlight');
+        selectedNode = parent;
+        selectedNode.classList.add('highlight');
+      } else {
+        alert("No parent node found.");
+      }
+    }
+
+    // Traverse Next Sibling
+    function traverseNext() {
+      if (!selectedNode) return alert("No node selected.");
+      let next = selectedNode.nextElementSibling;
+      while (next && !next.classList.contains('node')) {
+        next = next.nextElementSibling;
+      }
+      if (next) {
+        selectedNode.classList.remove('highlight');
+        selectedNode = next;
+        selectedNode.classList.add('highlight');
+      } else {
+        alert("No next sibling found.");
+      }
+    }
+
+    // Traverse Previous Sibling
+    function traversePrev() {
+      if (!selectedNode) return alert("No node selected.");
+      let prev = selectedNode.previousElementSibling;
+      while (prev && !prev.classList.contains('node')) {
+        prev = prev.previousElementSibling;
+      }
+      if (prev) {
+        selectedNode.classList.remove('highlight');
+        selectedNode = prev;
+        selectedNode.classList.add('highlight');
+      } else {
+        alert("No previous sibling found.");
+      }
+    }
+
+    // Add Child Node
+    function addChild() {
+      if (!selectedNode) return alert("No node selected.");
+      const type = getNodeType(selectedNode);
+
+      if (type === 'grandparent') {
+        const parent = createNode('parent', `Parent ${Math.floor(Math.random()*100)}`);
+        const child1 = createNode('child', `Child A`);
+        const child2 = createNode('child', `Child B`);
+        parent.appendChild(child1);
+        parent.appendChild(child2);
+        selectedNode.appendChild(parent);
+      } else if (type === 'parent') {
+        const child = createNode('child', `Child ${Math.floor(Math.random()*100)}`);
+        selectedNode.appendChild(child);
+      } else {
+        alert("Cannot add child to a child node.");
+      }
+    }
+
+    // Delete Node
+    function deleteNode() {
+      if (!selectedNode) return alert("No node selected.");
+      if (selectedNode.id === 'grandparent') {
+        alert("Cannot delete the grandparent node.");
+        return;
+      }
+      const parent = selectedNode.parentElement;
+      selectedNode.remove();
+      selectedNode = null;
+    }
+
+    // Helper: Create Node Element
+    function createNode(type, text) {
+      const div = document.createElement('div');
+      div.classList.add('node', type);
+      div.textContent = text;
+      return div;
+    }
+
+    // Helper: Determine Node Type
+    function getNodeType(node) {
+      if (node.classList.contains('grandparent')) return 'grandparent';
+      if (node.classList.contains('parent')) return 'parent';
+      if (node.classList.contains('child')) return 'child';
+      return '';
+    }
+  </script>
+</body>
+</html>
